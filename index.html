@@ -1,1 +1,103 @@
+<!DOCTYPE html>
+ <html>
+  <head>
+    <!-- meta for the browswer to allow for mobile first designs -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+   <title>Go Badger!</title>
+
+   <style>
+    html,
+    body,
+    #viewDiv {
+     padding: 0;
+     margin: 0;
+     height: 100%;
+     width: 100%;
+    }
+    /*design for survey button*/
+    .addRecordBtn {
+            position: absolute;
+            z-index: 10;
+            top: 10px;
+            right: 10px;
+            background-color: #fe4444;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+    }
+    .addRecordBtn:hover {
+            background-color: #ce566c;
+    }
+   </style>
+
+   <!-- importing the css and libraries for esri.js -->
+   <link rel="stylesheet" href="https://js.arcgis.com/4.26/esri/themes/light/main.css" />
+   <script src="https://js.arcgis.com/4.26/"></script>
+
+   <!-- loading the modules -->
+   <script>
+    require([ 
+        "esri/config", 
+        "esri/Map", 
+        "esri/views/MapView" ,
+        "esri/widgets/Locate",
+        "esri/widgets/Search",
+        "esri/layers/FeatureLayer"
+    ], 
+        function(esriConfig, Map, MapView,Locate, Search, FeatureLayer){
+
+        //add API key
+        esriConfig.apiKey = "AAPTxy8BH1VEsoebNVZXo8HurJZtzqH91EhYiqCQ_qj-RWtTWZu_K1_XG7Y-z2TWFIIqkT9RTqF2UHoN8GkjrqNbLLbTFu21rZqcKXEvDrMX4vGE5n8icL98UnU9THAZc9ropyhzNtrF6_I46NbBonEVraWp2erto6p-tht7Fckdjam73fw1b_4H53LLHssW2l_3hiAAIwkYi7zMrieH9ziTELIZBh-gTutzYUuRzTXPK_IGyo8A8a0g8rWOatmbjeNOAT1_o9Stcl9b"; 
+
+        const map = new Map ({
+            basemap: "topo-vector"
+        });
+
+        const view = new MapView ({
+            container: "viewDiv",
+            map: map,
+            zoom: 14,
+            center: [-89.4008, 43.0722]
+        });
+
+        const locateBtn = new Locate({
+            view: view
+        });
+
+    //add the locate widget to the top left crner of the view
+    view.ui.add(locateBtn, {
+        position: "top-left",
+        index:1
+    });
+
+        //adding the Const for the feature layer
+        const layer = new FeatureLayer({
+        url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_4d4f58e33ef144b790aa155195d9158a_results/FeatureServer",
+        });
+        map.add(layer);
+
+        //create a search widget
+        const searchWidget = new Search({
+            view: view
+        });
+        view.ui.add(searchWidget,{
+            position: "top-left",
+            index: 2
+        });
+
+});
+
+    </script>
+
+  </head>
+  <body>
+    <a href="https://survey123.arcgis.com/share/55a1dcb95cfe435a8b16cebfd83afef4"target="_blank" class="addRecordBtn">Add Record</a>
+   <div id="viewDiv"></div>
+  </body>
+</html>
 
