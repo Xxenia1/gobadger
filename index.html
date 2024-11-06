@@ -175,7 +175,7 @@
 
             L.marker([item.lat, item.long], { icon: buckyIcon })
               .addTo(map)
-              .bindPopup(`<b>Name:</b> ${item.name}<br><b>Location:</b> ${item.location}<br><b>Address:</b> ${item.address}`);
+              .bindPopup(popupContent);
           }
         });
       })
