@@ -7,9 +7,46 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <style>
-    #map {
+      #map {
       height: 600px;
     }
+
+    .popup-tabs {
+      font-family: Arial, sans-serif;
+      width: 250px;
+    }
+
+    .tab-buttons {
+      display: flex;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+
+    .tab-link {
+      flex: 1;
+      padding: 8px;
+      background-color: #f1f1f1;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .tab-link.active {
+      background-color: #fff;
+      border-bottom: 2px solid #007bff;
+    }
+
+    .tab-content {
+      display: none;
+      font-size: 14px;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    
   </style>
 </head>
 <body>
@@ -22,6 +59,18 @@
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
+
+    // Function to switch tabs
+    function openTab(event, tabId) {
+      const tabContent = event.currentTarget.closest('.popup-tabs').querySelectorAll('.tab-content');
+      const tabLinks = event.currentTarget.closest('.tab-buttons').querySelectorAll('.tab-link');
+
+      tabContent.forEach(content => content.classList.remove('active'));
+      tabLinks.forEach(link => link.classList.remove('active'));
+
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
 
     // Fetch the building data from the API
     fetch('https://map.wisc.edu/api/v1/buildings')
@@ -48,28 +97,28 @@
         // Add the GeoJSON data to the map with popups
         L.geoJSON(geojsonData, {
           onEachFeature: function (feature, layer) {
-            let popupContent = 
-            `<b>Name:</b> ${feature.properties.name}<br>
-             <b>Address:</b>${feature.properties.address}<br>
-             `;
+            // Create custom popup content with Info and Departments tabs
+            let popupContent = `
+              <div class="popup-tabs">
+                <div class="tab-buttons">
+                  <button onclick="openTab(event, 'info-${feature.properties.name}')" class="tab-link active">Info</button>
+                  <button onclick="openTab(event, 'departments-${feature.properties.name}')" class="tab-link">Departments</button>
+                </div>
+                <div id="info-${feature.properties.name}" class="tab-content active">
+                  <b>Name:</b> ${feature.properties.name}<br>
+                  <b>Address:</b> ${feature.properties.address}<br>
+                  <b>Object Type:</b> ${feature.properties.object_type || 'N/A'}
+                </div>
+                <div id="departments-${feature.properties.name}" class="tab-content">
+                  <b>Departments:</b><br>
+                  ${feature.properties.departments && feature.properties.departments.length > 0
+                    ? feature.properties.departments.map(dep => `<li>${dep.name}</li>`).join('')
+                    : 'No departments available'}
+                </div>
+              </div>
+            `;
 
-             //add object type if it exist
-             if (feature.properties.object_type){
-              popupContent += `<br><b>Object Type:</b> ${feature.properties.object_type}; `
-             }
-             // Add Department info if it exists and has content
-            if (feature.properties.departments && feature.properties.departments.length > 0) {
-              const departmentNames = feature.properties.departments.map(dep => dep.name).join(', ');
-              popupContent += `<br><b>Department:</b> ${departmentNames}`;
-            }
-            console.log(feature);
-            //cannot show all buildings' image
-            /*if (feature.properties.thumbnail) {
-              popupContent += `<br><img src="${feature.properties.thumbnail}" width="100" />`;
-            }*/
-
-
-            // Bind popup with building name, address, and thumbnail if available
+            // Bind popup with the formatted content
             layer.bindPopup(popupContent);
           },
           style: function (feature) {
