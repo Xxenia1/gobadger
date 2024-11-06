@@ -53,7 +53,7 @@
   <div id="map"></div>
   <script>
     // Initialize the Leaflet map
-    var map = L.map('map').setView([43.0731, -89.4012], 20);  // Coordinates for Madison, WI
+    var map = L.map('map').setView([43.07492672, -89.39593367], 20);  // Coordinates for Madison, WI
 
     // Add a base tile layer from OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -63,17 +63,17 @@
     //define a custom icon for buildings
     var buildingIcon = L.icon({
       iconUrl: 'school.png',
-      iconSize: [32,32],
-      iconAnchor: [16,32],
-      popupAnchor: [0,-32]
+      iconSize: [25,25],
+      iconAnchor: [16,25],
+      popupAnchor: [0,-25]
     });
 
     //define a custom icon for Bucky sculpture
     var buckyIcon = L.icon({
       iconUrl:'bucky.png',
-      iconSize: [25,25],
-      iconAnchor: [16,25],
-      popupAnchor: [0,-25]
+      iconSize: [32,32],
+      iconAnchor: [16,32],
+      popupAnchor: [0,-32]
     });
 
     // Mapping of sculpture names to image paths
