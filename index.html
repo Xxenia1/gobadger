@@ -59,11 +59,43 @@
       vertical-align: middle;
     }
 
+    /*design for survey button*/
+    .addRecordBtn {
+            position: absolute;
+            z-index: 10;
+            top: 10px;
+            right: 10px;
+            background-color: #fe4444;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+    }
+    .addRecordBtn:hover {
+            background-color: #ce566c;
+    }
+
+    .locate-button{
+      position: absolute;
+      top: 100px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 0 5px rgba(0,0,0,0.4);
+    }
+
     
   </style>
 </head>
 <body>
   <div id="map"></div>
+  <div class="locate-button" onclick="locateUser()">Locate Me</div>
   <script>
     // Initialize the Leaflet map
     var map = L.map('map').setView([43.07492672, -89.39593367], 20);  // Coordinates for Madison, WI
@@ -265,6 +297,25 @@
         return div;
       };
       legend.addTo(map);
+
+      //add locate button
+      function locateUser (){
+        map.locate({
+          setview: true,
+          mazZoom: 20
+        });
+      }
+
+      //event listner for location
+      map.on('locationfound', function(e){
+        L.marker(e,latlng).addTo(map)
+          .bindPopup("You are here").openPopup();
+      });
+
+      map.on('locationerror', function(){
+        alert("Location access denied.");
+      });
+      
   </script>
 </body>
 </html>
