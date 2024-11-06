@@ -50,10 +50,7 @@
             let popupContent = 
             `<b>Name:</b> ${feature.properties.name}<br>
              <b>Address:</b>${feature.properties.address}<br>
-             <b>Oject Type:</b>>${feature.properties.object_type ||'N/A'}<br>
-             <b>Department:</b>>${feature.properties.departments ? feature.properties.departments.map (dep =>dep.name).join(',') : 'N/A'}
              `;
-            
             //cannot show all buildings' image
             /*if (feature.properties.thumbnail) {
               popupContent += `<br><img src="${feature.properties.thumbnail}" width="100" />`;
