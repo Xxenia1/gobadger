@@ -60,6 +60,14 @@
       attribution: 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    //define a custom icon for buildings
+    var schoolIcon = L.icon({
+      iconUrl: 'school.png',
+      iconSize: [32,32],
+      iconAnchor: [16,32],
+      popupAnchor: [0,-32]
+    });
+
     // Function to switch tabs
     function openTab(event, tabId) {
       const tabContent = event.currentTarget.closest('.popup-tabs').querySelectorAll('.tab-content');
@@ -120,9 +128,6 @@
 
             // Bind popup with the formatted content
             layer.bindPopup(popupContent);
-          },
-          style: function (feature) {
-            return { color: 'blue' };
           }
         }).addTo(map);
       })
