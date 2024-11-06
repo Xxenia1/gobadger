@@ -39,7 +39,8 @@
             "properties": {
               "name": item.name,
               "address": item.street_address,
-              "thumbnail": item.thumbnail
+              "object_type": item.object_type,
+              "departments": item.departments
             }
           }))
         };
@@ -51,6 +52,11 @@
             `<b>Name:</b> ${feature.properties.name}<br>
              <b>Address:</b>${feature.properties.address}<br>
              `;
+
+             //add object type if it exist
+             if (feature.properties.object_type){
+              popupContent += `<br><b>Object Type:</b> ${feature.properties.object_type}; `
+             }
              // Add Department info if it exists and has content
             if (feature.properties.departments && feature.properties.departments.length > 0) {
               const departmentNames = feature.properties.departments.map(dep => dep.name).join(', ');
