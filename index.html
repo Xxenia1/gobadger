@@ -104,6 +104,9 @@
 
         // Add the GeoJSON data to the map with popups
         L.geoJSON(geojsonData, {
+          pointToLayer: function (feature,latlng){
+            return L.marke(latlng, { icon: schoolIcon});
+          },
           onEachFeature: function (feature, layer) {
             // Create custom popup content with Info and Departments tabs
             let popupContent = `
