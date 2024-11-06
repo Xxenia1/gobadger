@@ -78,16 +78,20 @@
             background-color: #ce566c;
     }
 
-    .locate-button{
-      position: absolute;
-      top: 100px;
-      left: 10px;
-      z-index: 1000;
+    .leaflet-control-locate {
       background: white;
-      padding: 8px;
-      border-radius: 4px;
+      padding: 5px;
       cursor: pointer;
-      box-shadow: 0 0 5px rgba(0,0,0,0.4);
+      font-size: 18px;
+      text-align: center;
+      width: 35px;
+      height: 35px;
+      line-height: 35px;
+      border-radius: 4px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+    }
+    .leaflet-control-locate:hover {
+      background: #f4f4f4;
     }
 
     
@@ -298,23 +302,33 @@
       };
       legend.addTo(map);
 
-      //add locate button
-      function locateUser (){
-        map.locate({
-          setview: true,
-          mazZoom: 20
-        });
-      }
+      // Add a custom Locate Control
+    var locateControl = L.control({position: 'topleft'});
 
-      //event listner for location
-      map.on('locationfound', function(e){
-        L.marker(e,latlng).addTo(map)
-          .bindPopup("You are here").openPopup();
-      });
+    locateControl.onAdd = function () {
+      var div = L.DomUtil.create('div', 'leaflet-control-locate');
+      div.innerHTML = "📍";
+      div.title = "Locate Me";
+      div.onclick = locateUser;
+      return div;
+    };
 
-      map.on('locationerror', function(){
-        alert("Location access denied.");
-      });
+    locateControl.addTo(map);
+
+    // Locate function to zoom to user's location
+    function locateUser() {
+      map.locate({ setView: true, maxZoom: 16 });
+    }
+
+    // Event listeners for location events
+    map.on('locationfound', function(e) {
+      L.marker(e.latlng).addTo(map)
+        .bindPopup("You are here").openPopup();
+    });
+
+    map.on('locationerror', function() {
+      alert("Location access denied.");
+    });
       
   </script>
 </body>
