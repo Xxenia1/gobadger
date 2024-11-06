@@ -71,9 +71,9 @@
     //define a custom icon for Bucky sculpture
     var buckyIcon = L.icon({
       iconUrl:'bucky.png',
-      iconSize: [32,32],
-      iconAnchor: [16,32],
-      popupAnchor: [0,-32]
+      iconSize: [25,25],
+      iconAnchor: [16,25],
+      popupAnchor: [0,-25]
     });
 
     // Function to switch tabs
@@ -88,23 +88,45 @@
       event.currentTarget.classList.add('active');
     }
 
+    function parseCSV(text) {
+      const rows = text.split('\n').slice(1); // Skip the header row
+      return rows.map(row => {
+        const columns = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+        if (!columns || columns.length !== 5) {
+          console.error("Malformed row:", row);
+          return null; // Skip malformed rows
+        }
+
+        const [name, location, address, lat, longitude] = columns;
+        return {
+          name: name.replace(/(^"|"$)/g, '').trim(),
+          location: location.replace(/(^"|"$)/g, '').trim(),
+          address: address.replace(/(^"|"$)/g, '').trim(),
+          lat: parseFloat(lat.trim()),
+          long: parseFloat(longitude.trim())
+        };
+      }).filter(item => item !== null); // Remove null entries
+    }
+
+    // Fetch and parse the CSV file without PapaParse
     fetch('Bucky.csv')
       .then(response => response.text())
       .then(csvText => {
-        const data = Papa.parse(csvText, { header: true }).data;
+        const data = parseCSV(csvText);
 
         // Add markers for each location in the CSV
         data.forEach(item => {
-          if (item.Lat && item.Long) {  // Check that lat/lon exist
-            L.marker([parseFloat(item.Lat), parseFloat(item.Long)], { icon: buckyIcon })
+          if (item.lat && item.long) {
+            L.marker([item.lat, item.long], { icon: buckyIcon })
               .addTo(map)
-              .bindPopup(`<b>Name:</b> ${item.Bucky}<br><b>Location:</b> ${item.Location}<br><b>Address:</b> ${item.Address}`);
+              .bindPopup(`<b>Name:</b> ${item.name}<br><b>Location:</b> ${item.location}<br><b>Address:</b> ${item.address}`);
           }
         });
       })
       .catch(error => {
         console.error('Error loading or parsing Bucky.csv:', error);
       });
+
 
     // Fetch the building data from the API
     fetch('https://map.wisc.edu/api/v1/buildings')
