@@ -69,9 +69,12 @@
     });
 
     //define a custom icon for Bucky sculpture
-   // var buckyIcon = L.icon({
-
-    //})
+    var buckyIcon = L.icon({
+      iconUrl:'bucky.png',
+      iconSize: [32,32],
+      iconAnchor: [16,32],
+      popupAnchor: [0,-32]
+    });
 
     // Function to switch tabs
     function openTab(event, tabId) {
@@ -84,6 +87,45 @@
       document.getElementById(tabId).classList.add('active');
       event.currentTarget.classList.add('active');
     }
+
+    function parseCSV(text) {
+      const rows = text.split('\n').slice(1);  // Skip the header row
+      return rows.map(row => {
+        const columns = row.split(',');
+
+        // Ensure the row has exactly five columns
+        if (columns.length !== 5) {
+          console.error("Malformed row:", row);
+          return null;  // Skip malformed rows
+        }
+
+        const [name, location, address, lat, longitude] = columns;
+
+        return {
+          name: name.trim(),
+          location: location.trim(),
+          address: address.trim(),
+          lat: parseFloat(lat.trim()),
+          long: parseFloat(longitude.trim())
+        };
+      }).filter(item => item !== null);  // Remove any null entries caused by malformed rows
+    }
+
+    //fetch the bucky sculpture
+    fetch('Bucky.csv')
+      .then(response => response.text())
+      .then(csvText => {
+        const data = parseCSV(csvText);
+
+        data.forEach(item => {
+          L.marker([item.lat, item.long], { icon: buckyIcon })
+            .addTo(map)
+            .bindPopup(`<b>Name:</b> ${item.name}<br><b>Location:</b> ${item.location}<br><b>Address:</b> ${item.address}`);
+        });
+      })
+      .catch(error => {
+        console.error('Error loading or parsing Bucky.csv:', error);
+      });
 
     // Fetch the building data from the API
     fetch('https://map.wisc.edu/api/v1/buildings')
