@@ -51,6 +51,12 @@
             `<b>Name:</b> ${feature.properties.name}<br>
              <b>Address:</b>${feature.properties.address}<br>
              `;
+             // Add Department info if it exists and has content
+            if (feature.properties.departments && feature.properties.departments.length > 0) {
+              const departmentNames = feature.properties.departments.map(dep => dep.name).join(', ');
+              popupContent += `<br><b>Department:</b> ${departmentNames}`;
+            }
+            console.log(feature);
             //cannot show all buildings' image
             /*if (feature.properties.thumbnail) {
               popupContent += `<br><img src="${feature.properties.thumbnail}" width="100" />`;
