@@ -46,6 +46,19 @@
       display: block;
     }
 
+    .legend {
+      background:white;
+      padding: 10px;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .legend-icon{
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+    }
+
     
   </style>
 </head>
@@ -241,6 +254,17 @@
       .catch(error => {
         console.error('Error fetching the building data:', error);
       });
+
+      //add legend to the map
+      var legend = L.control ({position: 'bottomright'});
+      legend.onAdd = function(){
+        var div = L.DomUtil.create('div', 'legend');
+        div.innerHTML += '<h4>Legend</h4>';
+        div.innerHTML += '<img class="legend-icon" src="bucky.png" alt="Bucky Sculpture Icon"> Bucky Sculpture<br>';
+        div.innerHTML += '<img class="legend-icon" src="school.png" alt="Building Icon"> Building<br>';
+        return div;
+      };
+      legend.addTo(map);
   </script>
 </body>
 </html>
