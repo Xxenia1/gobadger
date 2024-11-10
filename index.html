@@ -7,9 +7,15 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <style>
-      #map {
-      height: 600px;
-    }
+     html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  #map {
+    height: 100%;
+    width: 100%;
+  }
 
     .popup-tabs {
       font-family: Arial, sans-serif;
@@ -45,18 +51,43 @@
     .tab-content.active {
       display: block;
     }
-
-    .legend {
-      background:white;
+    /*design for legend container*/
+    /* Legend styles */
+    .legend-container {
+      position: absolute;
+      top: 80px; /* Adjust to position under search bar */
+      left: 10px;
+      width: 250px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      font-family: Arial, sans-serif;
+      z-index: 1000;
       padding: 10px;
-      line-height: 1.5;
-      font-size: 14px;
     }
-
-    .legend-icon{
+    .legend-header {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .legend-icon-container {
+      width: 25px;
+      height: 25px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 8px;
+    }
+    .legend-icon {
       width: 16px;
       height: 16px;
-      vertical-align: middle;
     }
 
     /*design for survey button*/
@@ -94,12 +125,45 @@
       background: #f4f4f4;
     }
 
+    /* Styling for the search bar */
+    .search-bar-container {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 250px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      font-family: Arial, sans-serif;
+      padding: 10px;
+      z-index: 1000;
+    }
+    .search-bar {
+      display: flex;
+      align-items: center;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .search-bar button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
     
   </style>
 </head>
 <body>
   <div id="map"></div>
-  <div class="locate-button" onclick="locateUser()">Locate Me</div>
   <script>
     // Initialize the Leaflet map
     var map = L.map('map').setView([43.07492672, -89.39593367], 20);  // Coordinates for Madison, WI
@@ -179,6 +243,7 @@
       event.currentTarget.classList.add('active');
     }
 
+    //function to get read the data in csv file
     function parseCSV(text) {
       const rows = text.split('\n').slice(1); // Skip the header row
       return rows.map(row => {
@@ -291,44 +356,82 @@
         console.error('Error fetching the building data:', error);
       });
 
-      //add legend to the map
-      var legend = L.control ({position: 'bottomright'});
-      legend.onAdd = function(){
-        var div = L.DomUtil.create('div', 'legend');
-        div.innerHTML += '<h4>Legend</h4>';
-        div.innerHTML += '<img class="legend-icon" src="bucky.png" alt="Bucky Sculpture Icon"> Bucky Sculpture<br>';
-        div.innerHTML += '<img class="legend-icon" src="school.png" alt="Building Icon"> Building<br>';
-        return div;
-      };
-      legend.addTo(map);
+      // Sample marker data to simulate a search (for example purposes)
+    var markers = [
+      { name: "Bucky on Guard", coords: [43.074, -89.395], icon: buckyIcon },
+      { name: "Library Building", coords: [43.076, -89.397], icon: buildingIcon }
+    ];
 
-      // Add a custom Locate Control
-    var locateControl = L.control({position: 'topleft'});
+    markers.forEach(function(marker) {
+      L.marker(marker.coords, { icon: marker.icon })
+        .addTo(map)
+        .bindPopup(marker.name);
+    });
 
-    locateControl.onAdd = function () {
-      var div = L.DomUtil.create('div', 'leaflet-control-locate');
-      div.innerHTML = "📍";
-      div.title = "Locate Me";
-      div.onclick = locateUser;
-      return div;
-    };
-
-    locateControl.addTo(map);
-
-    // Locate function to zoom to user's location
-    function locateUser() {
-      map.locate({ setView: true, maxZoom: 16 });
+    // Search function
+    function searchLocation() {
+      var input = document.getElementById("searchInput").value.toLowerCase();
+      
+      // Check if input matches any marker name
+      var found = markers.find(m => m.name.toLowerCase().includes(input));
+      
+      if (found) {
+        map.setView(found.coords, 18);  // Zoom to the found location
+        L.popup()
+          .setLatLng(found.coords)
+          .setContent("Found: " + found.name)
+          .openOn(map);
+      } else {
+        alert("Location not found!");
+      }
     }
 
-    // Event listeners for location events
-    map.on('locationfound', function(e) {
-      L.marker(e.latlng).addTo(map)
-        .bindPopup("You are here").openPopup();
+      // Custom legend control
+    var LegendControl = L.Control.extend({
+      options: {
+        position: 'bottomright'
+      },
+
+      onAdd: function () {
+        // Create the control container with a particular class name
+        var container = L.DomUtil.create('div', 'legend-control-container');
+        
+        // Add legend title
+        container.innerHTML = '<div class="legend-title">Legend</div>';
+
+        // Start SVG container for icons
+        var svg = '<svg width="160px" height="60px">';
+
+        // Define the items for the legend
+        var items = [
+          { id: 'bucky-icon', label: 'Bucky Sculpture', iconUrl: 'bucky.png' },
+          { id: 'building-icon', label: 'Building', iconUrl: 'school.png' }
+        ];
+
+        // Loop through items to create icons and labels in SVG
+        items.forEach(function(item, index) {
+          var yPosition = 20 + index * 30; // Position each item vertically
+
+          // Add circle icon
+          svg += `
+            <image x="10" y="${yPosition - 10}" width="20" height="20" href="${item.iconUrl}" />
+            <text x="40" y="${yPosition + 5}" class="legend-label">${item.label}</text>
+          `;
+        });
+
+        // Close SVG string
+        svg += '</svg>';
+
+        // Add SVG content to container
+        container.insertAdjacentHTML('beforeend', svg);
+
+        return container;
+      }
     });
 
-    map.on('locationerror', function() {
-      alert("Location access denied.");
-    });
+    // Add custom legend to the map
+    map.addControl(new LegendControl());
+
       
   </script>
 </body>
