@@ -200,6 +200,9 @@
 </head>
 <body>
   <div id="map"></div>
+  <!-- Add Record button -->
+  <button class="addRecordBtn" onclick="openSurvey()">Add Record</button>
+
 
   <script>
     // Initialize the Leaflet map
@@ -466,7 +469,12 @@
     // Call the createSidebar function after the page loads
     window.onload = function() {
       createSidebar();
-    };      
+    };  
+    
+    // Function to open the Survey123 form
+  function openSurvey() {
+    window.open("https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_4d4f58e33ef144b790aa155195d9158a_results/FeatureServer", "_blank");
+  }
   </script>
 </body>
 </html>
