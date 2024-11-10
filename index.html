@@ -51,43 +51,62 @@
     .tab-content.active {
       display: block;
     }
-    /*design for legend container*/
-    /* Legend styles */
-    .legend-container {
-      position: absolute;
-      top: 80px; /* Adjust to position under search bar */
-      left: 10px;
-      width: 250px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-      font-family: Arial, sans-serif;
-      z-index: 1000;
-      padding: 10px;
+    /* University logo header */
+    .sidebar-logo {
+      text-align: center;
+      padding-bottom: 10px;
     }
-    .legend-header {
-      font-weight: bold;
-      font-size: 16px;
+
+    .sidebar-logo img {
+      width: 50px;
+      height: auto;
+    }
+
+    /* Search bar styling */
+    .search-bar {
+      display: flex;
       margin-bottom: 10px;
     }
+
+    .search-input {
+      flex: 1;
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .search-button {
+      padding: 5px 10px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      border-radius: 0 4px 4px 0;
+    }
+
+    /* Legend styling */
+    .legend {
+      margin-top: 10px;
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+    }
+
+    .legend h4 {
+      margin: 0;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
     .legend-item {
       display: flex;
       align-items: center;
-      margin-bottom: 8px;
+      margin-top: 5px;
     }
-    .legend-icon-container {
-      width: 25px;
-      height: 25px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-right: 8px;
-    }
+
     .legend-icon {
-      width: 16px;
-      height: 16px;
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
     }
 
     /*design for survey button*/
@@ -164,6 +183,14 @@
 </head>
 <body>
   <div id="map"></div>
+   <!-- Search Bar Container -->
+   <div class="search-bar-container">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search location..." />
+      <button onclick="searchLocation()">🔍</button>
+    </div>
+  </div>
+
   <script>
     // Initialize the Leaflet map
     var map = L.map('map').setView([43.07492672, -89.39593367], 20);  // Coordinates for Madison, WI
@@ -356,81 +383,78 @@
         console.error('Error fetching the building data:', error);
       });
 
-      // Sample marker data to simulate a search (for example purposes)
-    var markers = [
-      { name: "Bucky on Guard", coords: [43.074, -89.395], icon: buckyIcon },
-      { name: "Library Building", coords: [43.076, -89.397], icon: buildingIcon }
-    ];
+      // Function to create the sidebar with search and legend
+    function createSidebar() {
+      const sidebar = document.createElement('div');
+      sidebar.className = 'sidebar-container';
 
-    markers.forEach(function(marker) {
-      L.marker(marker.coords, { icon: marker.icon })
-        .addTo(map)
-        .bindPopup(marker.name);
-    });
+      // University Logo
+      const logoDiv = document.createElement('div');
+      logoDiv.className = 'sidebar-logo';
+      const logoImg = document.createElement('img');
+      logoImg.src = 'wisconsin.png';  // Update path to your logo image
+      logoImg.alt = 'University of Wisconsin Logo';
+      logoDiv.appendChild(logoImg);
+      sidebar.appendChild(logoDiv);
 
-    // Search function
-    function searchLocation() {
-      var input = document.getElementById("searchInput").value.toLowerCase();
-      
-      // Check if input matches any marker name
-      var found = markers.find(m => m.name.toLowerCase().includes(input));
-      
-      if (found) {
-        map.setView(found.coords, 18);  // Zoom to the found location
-        L.popup()
-          .setLatLng(found.coords)
-          .setContent("Found: " + found.name)
-          .openOn(map);
-      } else {
-        alert("Location not found!");
-      }
+      // Search Bar
+      const searchDiv = document.createElement('div');
+      searchDiv.className = 'search-bar';
+      const searchInput = document.createElement('input');
+      searchInput.className = 'search-input';
+      searchInput.placeholder = 'Search location...';
+      const searchButton = document.createElement('button');
+      searchButton.className = 'search-button';
+      searchButton.innerText = '🔍';
+
+      // Add search button functionality
+      searchButton.addEventListener('click', function() {
+        const query = searchInput.value.toLowerCase();
+        // Add your search functionality here
+        console.log(`Searching for: ${query}`);
+      });
+
+      searchDiv.appendChild(searchInput);
+      searchDiv.appendChild(searchButton);
+      sidebar.appendChild(searchDiv);
+
+      // Legend
+      const legendDiv = document.createElement('div');
+      legendDiv.className = 'legend';
+      const legendTitle = document.createElement('h4');
+      legendTitle.innerText = 'Legend';
+      legendDiv.appendChild(legendTitle);
+
+      // Legend items
+      const buckyLegendItem = document.createElement('div');
+      buckyLegendItem.className = 'legend-item';
+      const buckyIcon = document.createElement('img');
+      buckyIcon.src = 'bucky.png';  // Update path to your Bucky icon
+      buckyIcon.className = 'legend-icon';
+      const buckyLabel = document.createTextNode('Bucky Sculpture');
+      buckyLegendItem.appendChild(buckyIcon);
+      buckyLegendItem.appendChild(buckyLabel);
+
+      const buildingLegendItem = document.createElement('div');
+      buildingLegendItem.className = 'legend-item';
+      const buildingIcon = document.createElement('img');
+      buildingIcon.src = 'school.png';  // Update path to your building icon
+      buildingIcon.className = 'legend-icon';
+      const buildingLabel = document.createTextNode('Building');
+      buildingLegendItem.appendChild(buildingIcon);
+      buildingLegendItem.appendChild(buildingLabel);
+
+      // Add legend items to legend container
+      legendDiv.appendChild(buckyLegendItem);
+      legendDiv.appendChild(buildingLegendItem);
+      sidebar.appendChild(legendDiv);
+
+      // Add the sidebar to the map container
+      document.body.appendChild(sidebar);
     }
 
-      // Custom legend control
-    var LegendControl = L.Control.extend({
-      options: {
-        position: 'bottomright'
-      },
-
-      onAdd: function () {
-        // Create the control container with a particular class name
-        var container = L.DomUtil.create('div', 'legend-control-container');
-        
-        // Add legend title
-        container.innerHTML = '<div class="legend-title">Legend</div>';
-
-        // Start SVG container for icons
-        var svg = '<svg width="160px" height="60px">';
-
-        // Define the items for the legend
-        var items = [
-          { id: 'bucky-icon', label: 'Bucky Sculpture', iconUrl: 'bucky.png' },
-          { id: 'building-icon', label: 'Building', iconUrl: 'school.png' }
-        ];
-
-        // Loop through items to create icons and labels in SVG
-        items.forEach(function(item, index) {
-          var yPosition = 20 + index * 30; // Position each item vertically
-
-          // Add circle icon
-          svg += `
-            <image x="10" y="${yPosition - 10}" width="20" height="20" href="${item.iconUrl}" />
-            <text x="40" y="${yPosition + 5}" class="legend-label">${item.label}</text>
-          `;
-        });
-
-        // Close SVG string
-        svg += '</svg>';
-
-        // Add SVG content to container
-        container.insertAdjacentHTML('beforeend', svg);
-
-        return container;
-      }
-    });
-
-    // Add custom legend to the map
-    map.addControl(new LegendControl());
+    // Call the createSidebar function to add the sidebar to the map
+    createSidebar();
 
       
   </script>
