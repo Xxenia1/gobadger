@@ -7,9 +7,9 @@
   <!-- Leaflet Library -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-
-  <!-- Esri Leaflet Plugin -->
-  <script src="https://unpkg.com/esri-leaflet@3.0.2/dist/esri-leaflet.js"></script>
+  <!-- importing the css and libraries for esri.js -->
+  <link rel="stylesheet" href="https://js.arcgis.com/4.26/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.26/"></script>
 
 
   <style>
@@ -205,14 +205,18 @@
   </style>
 </head>
 <body>
-  <div id="map"></div>
   <button class="addRecordBtn" onclick="openSurvey()">Add Record</button>
+  <div id="map"></div>
+  
   <script>
     // Initialize the Leaflet map
     var map = L.map('map').setView([43.07492672, -89.39593367], 20);  // Coordinates for Madison, WI
 
-    // Add Esri basemap
-    L.esri.basemapLayer('Topographic').addTo(map);
+   // Add OpenStreetMap basemap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
 
     //define a custom icon for buildings
     var buildingIcon = L.icon({
@@ -471,16 +475,9 @@
     window.onload = function() {
       createSidebar();
     };  
-    
-  // Add Survey123 Feature Layer
-  var surveyLayer = L.esri.featureLayer({
-    url: 'https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_4d4f58e33ef144b790aa155195d9158a_results/FeatureServer/0',
-    onEachFeature: function (feature, layer) {
-      layer.bindPopup(`<b>Location:</b> ${feature.properties.location}<br><b>Description:</b> ${feature.properties.description}`);
-    }
-  }).addTo(map);
 
-  // Function to open the Survey123 form in a new tab
+  
+  // Function to open Survey123 form
   function openSurvey() {
     window.open("https://survey123.arcgis.com/share/4d4f58e33ef144b790aa155195d9158a", "_blank");
   }
