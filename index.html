@@ -3,6 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
   <title>Leaflet Map with Building Popups</title>
   <!-- Leaflet Library -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
@@ -216,6 +220,10 @@
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
+    // Open the survey link in a new tab
+    function openSurvey() {
+      window.open("https://survey123.arcgis.com/share/4d4f58e33ef144b790aa155195d9158a", "_blank");
+    }
 
 
     //define a custom icon for buildings
@@ -475,12 +483,6 @@
     window.onload = function() {
       createSidebar();
     };  
-
-  
-  // Function to open Survey123 form
-  function openSurvey() {
-    window.open("https://survey123.arcgis.com/share/4d4f58e33ef144b790aa155195d9158a", "_blank");
-  }
 
   </script>
 </body>
