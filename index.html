@@ -51,62 +51,79 @@
     .tab-content.active {
       display: block;
     }
+    /* Sidebar container styling */
+    .sidebar-container {
+      position: absolute;
+      top: 90px;
+      left: 10px;
+      width: 300px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      font-family: Arial, sans-serif;
+      z-index: 1000;
+      padding: 15px;
+    }
+
     /* University logo header */
     .sidebar-logo {
-      text-align: center;
-      padding-bottom: 10px;
+      text-align: left;
+      padding-bottom: 20px;
     }
 
     .sidebar-logo img {
-      width: 50px;
+      width: 280px;
       height: auto;
     }
+
 
     /* Search bar styling */
     .search-bar {
       display: flex;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
 
     .search-input {
       flex: 1;
-      padding: 5px;
+      padding: 12px;
+      font-size: 16px;
       border: 1px solid #ccc;
-      border-radius: 4px 0 0 4px;
+      border-radius: 6px 0 0 6px;
     }
 
     .search-button {
-      padding: 5px 10px;
+      padding: 12px 20px;
+      font-size: 16px;
       border: none;
       background-color: #007bff;
       color: white;
       cursor: pointer;
-      border-radius: 0 4px 4px 0;
+      border-radius: 0 6px 6px 0;
     }
 
     /* Legend styling */
     .legend {
-      margin-top: 10px;
+      margin-top: 15px;
       border-top: 1px solid #ccc;
-      padding-top: 10px;
+      padding-top: 15px;
     }
 
     .legend h4 {
       margin: 0;
       font-weight: bold;
-      font-size: 14px;
+      font-size: 16px;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      margin-top: 5px;
+      margin-top: 8px;
     }
 
     .legend-icon {
-      width: 20px;
-      height: 20px;
-      margin-right: 8px;
+      width: 25px;
+      height: 25px;
+      margin-right: 10px;
     }
 
     /*design for survey button*/
@@ -183,13 +200,6 @@
 </head>
 <body>
   <div id="map"></div>
-   <!-- Search Bar Container -->
-   <div class="search-bar-container">
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search location..." />
-      <button onclick="searchLocation()">🔍</button>
-    </div>
-  </div>
 
   <script>
     // Initialize the Leaflet map
@@ -383,7 +393,7 @@
         console.error('Error fetching the building data:', error);
       });
 
-      // Function to create the sidebar with search and legend
+    // Function to create the sidebar with search and legend
     function createSidebar() {
       const sidebar = document.createElement('div');
       sidebar.className = 'sidebar-container';
@@ -410,8 +420,8 @@
       // Add search button functionality
       searchButton.addEventListener('click', function() {
         const query = searchInput.value.toLowerCase();
-        // Add your search functionality here
         console.log(`Searching for: ${query}`);
+        // You can add custom search functionality here
       });
 
       searchDiv.appendChild(searchInput);
@@ -453,10 +463,10 @@
       document.body.appendChild(sidebar);
     }
 
-    // Call the createSidebar function to add the sidebar to the map
-    createSidebar();
-
-      
+    // Call the createSidebar function after the page loads
+    window.onload = function() {
+      createSidebar();
+    };      
   </script>
 </body>
 </html>
